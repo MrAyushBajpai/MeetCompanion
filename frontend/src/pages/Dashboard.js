@@ -7,6 +7,13 @@ export default function Dashboard() {
   const [editing, setEditing] = useState(null);
   const [editData, setEditData] = useState({});
 
+  const formatTimestamp = (value) => {
+    if (!value) return "—";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "—";
+    return date.toLocaleString();
+  };
+
   const fetchTasks = async () => {
     const res = await API.get("/tasks");
     setTasks(res.data);
@@ -144,7 +151,8 @@ export default function Dashboard() {
 
                 <div className="task-meta mt-2">
                   Owner: <b>{t.owner || "—"}</b> | Deadline:{" "}
-                  <b>{t.deadline || "—"}</b> | Priority: <b>{t.priority}</b>
+                  <b>{t.deadline || "—"}</b> | Priority: <b>{t.priority}</b> |
+                  Created: <b>{formatTimestamp(t.created_at)}</b>
                 </div>
 
                 {/* BUTTON ROW — NEVER CHANGES POSITION */}

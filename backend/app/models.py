@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from datetime import datetime, timezone
+
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
 from .database import Base
 
 class User(Base):
@@ -16,5 +18,10 @@ class Task(Base):
     deadline = Column(String, nullable=True)
     priority = Column(String)
     completed = Column(Boolean, default=False)
+    created_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
 
     user_id = Column(Integer, ForeignKey("users.id"))
