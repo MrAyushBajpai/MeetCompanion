@@ -6,6 +6,8 @@ export default function Dashboard() {
   const [tasks, setTasks] = useState([]);
   const [editing, setEditing] = useState(null);
   const [editData, setEditData] = useState({});
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [priorityFilter, setPriorityFilter] = useState("all");
 
   const formatTimestamp = (value) => {
     if (!value) return "—";
@@ -17,6 +19,31 @@ export default function Dashboard() {
   const fetchTasks = async () => {
     const res = await API.get("/tasks");
     setTasks(res.data);
+  };
+
+  const getSortedFilteredTasks = () => {
+    const filtered = tasks.filter((task) => {
+      const statusMatch =
+        statusFilter === "all" ||
+        (statusFilter === "completed" && task.completed) ||
+        (statusFilter === "open" && !task.completed);
+
+      const priorityMatch =
+        priorityFilter === "all" || task.priority === priorityFilter;
+
+      return statusMatch && priorityMatch;
+    });
+
+    return filtered.sort((a, b) => {
+      const aTime = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const bTime = b.created_at ? new Date(b.created_at).getTime() : 0;
+
+      if (!Number.isNaN(aTime) && !Number.isNaN(bTime) && aTime !== bTime) {
+        return bTime - aTime;
+      }
+
+      return b.id - a.id;
+    });
   };
 
   const extract = async () => {
@@ -89,7 +116,58 @@ export default function Dashboard() {
 
         <h5>Your Tasks</h5>
 
-        {tasks.map((t) => (
+        <div className="task-filters card p-3 mb-3">
+          <div className="filter-group">
+            <span className="filter-label">Status</span>
+            <div className="btn-group" role="group" aria-label="Status filter">
+              <button
+                className={`btn btn-sm ${
+                  statusFilter === "all" ? "btn-primary" : "btn-outline-light"
+                }`}
+                onClick={() => setStatusFilter("all")}
+              >
+                All
+              </button>
+              <button
+                className={`btn btn-sm ${
+                  statusFilter === "open" ? "btn-primary" : "btn-outline-light"
+                }`}
+                onClick={() => setStatusFilter("open")}
+              >
+                Open
+              </button>
+              <button
+                className={`btn btn-sm ${
+                  statusFilter === "completed"
+                    ? "btn-primary"
+                    : "btn-outline-light"
+                }`}
+                onClick={() => setStatusFilter("completed")}
+              >
+                Completed
+              </button>
+            </div>
+          </div>
+
+          <div className="filter-group">
+            <label className="filter-label" htmlFor="priorityFilter">
+              Priority
+            </label>
+            <select
+              id="priorityFilter"
+              className="form-control form-control-sm"
+              value={priorityFilter}
+              onChange={(e) => setPriorityFilter(e.target.value)}
+            >
+              <option value="all">All</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+        </div>
+
+        {getSortedFilteredTasks().map((t) => (
           <div className="card p-3 mb-3" key={t.id}>
             {editing === t.id ? (
               <>

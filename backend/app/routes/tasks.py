@@ -16,7 +16,12 @@ def get_tasks(
     db: Session = Depends(get_db),
     user = Depends(get_current_user)
 ):
-    tasks = db.query(Task).filter(Task.user_id == user.id).all()
+    tasks = (
+        db.query(Task)
+        .filter(Task.user_id == user.id)
+        .order_by(Task.created_at.desc(), Task.id.desc())
+        .all()
+    )
     return tasks
 
 

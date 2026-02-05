@@ -50,6 +50,36 @@ body {
   color: #94a3b8;
 }
 
+/* Filters */
+.task-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-label {
+  font-size: 13px;
+  color: #cbd5e1;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.btn-outline-light {
+  color: #e2e8f0 !important;
+  border-color: #475569 !important;
+}
+
+.btn-outline-light:hover {
+  background-color: #1f2937 !important;
+}
+
 /* Completed label */
 .completed-label {
   color: #22c55e;
