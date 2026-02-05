@@ -9,8 +9,10 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "https://taskscribe.vercel.app",
+        "https://taskscribe-mrayushbajpai.vercel.app",
+        "https://taskscribe-1iszyc1yy-mrayushbajpais-projects.vercel.app/"
     ],
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
