@@ -12,30 +12,45 @@ export default function Register() {
   };
 
   return (
-    <div className="container mt-5">
-      <div className="card p-4 mx-auto" style={{ maxWidth: "400px" }}>
-        <h3 className="text-center mb-4">Register</h3>
+    <div className="auth-page">
+      <div className="auth-shell">
+        <div className="auth-card glass-card">
+          <div className="auth-brand">
+            <span className="brand-mark" />
+            <div>
+              <div className="brand-title">TaskScribe</div>
+              <div className="brand-subtitle">Start writing tasks in seconds</div>
+            </div>
+          </div>
 
-        <input
-          className="form-control mb-3"
-          placeholder="Username"
-          onChange={(e) => setData({ ...data, username: e.target.value })}
-        />
+          <h3 className="auth-heading">Create your account</h3>
+          <p className="auth-subheading">One workspace for every meeting.</p>
 
-        <input
-          type="password"
-          className="form-control mb-3"
-          placeholder="Password"
-          onChange={(e) => setData({ ...data, password: e.target.value })}
-        />
+          <div className="auth-form">
+            <label className="form-label">Username</label>
+            <input
+              className="form-control"
+              placeholder="Choose a username"
+              onChange={(e) => setData({ ...data, username: e.target.value })}
+            />
 
-        <button className="btn btn-primary w-100" onClick={register}>
-          Register
-        </button>
+            <label className="form-label mt-3">Password</label>
+            <input
+              type="password"
+              className="form-control"
+              placeholder="Create a password"
+              onChange={(e) => setData({ ...data, password: e.target.value })}
+            />
 
-        <p className="text-center mt-3">
-          Already have account? <Link to="/">Login</Link>
-        </p>
+            <button className="btn btn-primary w-100 mt-4" onClick={register}>
+              Register
+            </button>
+          </div>
+
+          <p className="auth-footer">
+            Already have an account? <Link to="/">Sign in</Link>
+          </p>
+        </div>
       </div>
     </div>
   );

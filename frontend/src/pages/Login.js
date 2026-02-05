@@ -13,30 +13,45 @@ export default function Login() {
   };
 
   return (
-    <div className="container mt-5">
-      <div className="card p-4 mx-auto" style={{ maxWidth: "400px" }}>
-        <h3 className="text-center mb-4">TaskScribe Login</h3>
+    <div className="auth-page">
+      <div className="auth-shell">
+        <div className="auth-card glass-card">
+          <div className="auth-brand">
+            <span className="brand-mark" />
+            <div>
+              <div className="brand-title">TaskScribe</div>
+              <div className="brand-subtitle">Turn meetings into momentum</div>
+            </div>
+          </div>
 
-        <input
-          className="form-control mb-3"
-          placeholder="Username"
-          onChange={(e) => setData({ ...data, username: e.target.value })}
-        />
+          <h3 className="auth-heading">Welcome back</h3>
+          <p className="auth-subheading">Sign in to manage your tasks.</p>
 
-        <input
-          type="password"
-          className="form-control mb-3"
-          placeholder="Password"
-          onChange={(e) => setData({ ...data, password: e.target.value })}
-        />
+          <div className="auth-form">
+            <label className="form-label">Username</label>
+            <input
+              className="form-control"
+              placeholder="Enter your username"
+              onChange={(e) => setData({ ...data, username: e.target.value })}
+            />
 
-        <button className="btn btn-primary w-100" onClick={login}>
-          Login
-        </button>
+            <label className="form-label mt-3">Password</label>
+            <input
+              type="password"
+              className="form-control"
+              placeholder="••••••••"
+              onChange={(e) => setData({ ...data, password: e.target.value })}
+            />
 
-        <p className="text-center mt-3">
-          New user? <Link to="/register">Register</Link>
-        </p>
+            <button className="btn btn-primary w-100 mt-4" onClick={login}>
+              Login
+            </button>
+          </div>
+
+          <p className="auth-footer">
+            New user? <Link to="/register">Create an account</Link>
+          </p>
+        </div>
       </div>
     </div>
   );
