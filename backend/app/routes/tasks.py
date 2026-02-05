@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from ..models import Task
 from ..schemas import TaskOut
+from ..schemas import TaskCreate
 from ..deps_auth import get_current_user, get_db
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
@@ -59,3 +60,26 @@ def delete_task(
     db.delete(task)
     db.commit()
     return {"message": "Task deleted"}
+
+@router.put("/{task_id}")
+def update_task(
+    task_id: int,
+    updated: TaskCreate,
+    db: Session = Depends(get_db),
+    user = Depends(get_current_user)
+):
+    task = db.query(Task).filter(
+        Task.id == task_id,
+        Task.user_id == user.id
+    ).first()
+
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    task.description = updated.description
+    task.owner = updated.owner
+    task.deadline = updated.deadline
+    task.priority = updated.priority
+
+    db.commit()
+    return {"message": "Task updated"}

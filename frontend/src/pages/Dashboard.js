@@ -4,6 +4,8 @@ import API from "../api";
 export default function Dashboard() {
   const [text, setText] = useState("");
   const [tasks, setTasks] = useState([]);
+  const [editing, setEditing] = useState(null);
+  const [editData, setEditData] = useState({});
 
   const fetchTasks = async () => {
     const res = await API.get("/tasks");
@@ -26,13 +28,23 @@ export default function Dashboard() {
     fetchTasks();
   };
 
+  const startEdit = (task) => {
+    setEditing(task.id);
+    setEditData(task);
+  };
+
+  const saveEdit = async (id) => {
+    await API.put(`/tasks/${id}`, editData);
+    setEditing(null);
+    fetchTasks();
+  };
+
   useEffect(() => {
     fetchTasks();
   }, []);
 
   return (
     <>
-      {/* Navbar */}
       <nav className="navbar navbar-dark bg-dark px-4">
         <span className="navbar-brand">TaskScribe Dashboard</span>
         <button
@@ -48,14 +60,12 @@ export default function Dashboard() {
 
       <div className="container mt-4">
 
-        {/* Extract Section */}
         <div className="card p-4 mb-4">
           <h5 className="mb-3">Paste Meeting Transcript</h5>
 
           <textarea
             className="form-control mb-3"
             rows="4"
-            placeholder="e.g. Rohit needs to fix login bug before 12 Feb..."
             value={text}
             onChange={(e) => setText(e.target.value)}
           />
@@ -65,45 +75,104 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* Task List */}
-        <h5 className="mb-3">Your Tasks</h5>
-
-        {tasks.length === 0 && (
-          <div className="alert alert-secondary">
-            No tasks yet. Paste a meeting transcript to generate tasks.
-          </div>
-        )}
+        <h5>Your Tasks</h5>
 
         {tasks.map((t) => (
           <div className="card p-3 mb-3" key={t.id}>
-            <div className="task-title">{t.description}</div>
 
-            <div className="task-meta mt-2">
-              Owner: <b>{t.owner || "—"}</b> |
-              Deadline: <b> {t.deadline || "—"}</b> |
-              Priority: <b> {t.priority}</b>
-            </div>
+            {editing === t.id ? (
+              <>
+                <input
+                  className="form-control mb-2"
+                  value={editData.description}
+                  onChange={(e) =>
+                    setEditData({ ...editData, description: e.target.value })
+                  }
+                />
 
-            <div className="mt-3 d-flex gap-2">
-              {!t.completed && (
-                <button
-                  className="btn btn-success btn-sm"
-                  onClick={() => complete(t.id)}
+                <input
+                  className="form-control mb-2"
+                  placeholder="Owner"
+                  value={editData.owner || ""}
+                  onChange={(e) =>
+                    setEditData({ ...editData, owner: e.target.value })
+                  }
+                />
+
+                <input
+                  className="form-control mb-2"
+                  placeholder="Deadline"
+                  value={editData.deadline || ""}
+                  onChange={(e) =>
+                    setEditData({ ...editData, deadline: e.target.value })
+                  }
+                />
+
+                <select
+                  className="form-control mb-2"
+                  value={editData.priority}
+                  onChange={(e) =>
+                    setEditData({ ...editData, priority: e.target.value })
+                  }
                 >
-                  Mark Complete
+                  <option>Low</option>
+                  <option>Medium</option>
+                  <option>High</option>
+                </select>
+
+                <button
+                  className="btn btn-success btn-sm me-2"
+                  onClick={() => saveEdit(t.id)}
+                >
+                  Save
                 </button>
-              )}
 
-              <button
-                className="btn btn-danger btn-sm"
-                onClick={() => remove(t.id)}
-              >
-                Delete
-              </button>
-            </div>
+                <button
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => setEditing(null)}
+                >
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <>
+                <div className="task-title">{t.description}</div>
 
-            {t.completed && (
-              <div className="completed-label mt-2">✔ Completed</div>
+                <div className="task-meta mt-2">
+                  Owner: <b>{t.owner || "—"}</b> |
+                  Deadline: <b> {t.deadline || "—"}</b> |
+                  Priority: <b> {t.priority}</b>
+                </div>
+
+                <div className="mt-3 d-flex gap-2 flex-wrap">
+                  {!t.completed && (
+                    <button
+                      className="btn btn-success btn-sm"
+                      onClick={() => complete(t.id)}
+                    >
+                      Complete
+                    </button>
+                  )}
+
+                  <button
+                    className="btn btn-warning btn-sm"
+                    onClick={() => startEdit(t)}
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    className="btn btn-danger btn-sm"
+                    onClick={() => remove(t.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+
+                {t.completed && (
+                  <div className="completed-label mt-2">✔ Completed</div>
+                )}
+              </>
             )}
           </div>
         ))}
