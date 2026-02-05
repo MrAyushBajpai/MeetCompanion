@@ -83,3 +83,22 @@ def update_task(
 
     db.commit()
     return {"message": "Task updated"}
+
+
+@router.put("/{task_id}/undo")
+def mark_undo(
+    task_id: int,
+    db: Session = Depends(get_db),
+    user = Depends(get_current_user)
+):
+    task = db.query(Task).filter(
+        Task.id == task_id,
+        Task.user_id == user.id
+    ).first()
+
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    task.completed = False
+    db.commit()
+    return {"message": "Task marked as pending"}

@@ -23,6 +23,11 @@ export default function Dashboard() {
     fetchTasks();
   };
 
+  const reopen = async (id) => {
+    await API.put(`/tasks/${id}/undo`);
+    fetchTasks();
+  };
+
   const remove = async (id) => {
     await API.delete(`/tasks/${id}`);
     fetchTasks();
@@ -59,7 +64,7 @@ export default function Dashboard() {
       </nav>
 
       <div className="container mt-4">
-
+        {/* Extract Section */}
         <div className="card p-4 mb-4">
           <h5 className="mb-3">Paste Meeting Transcript</h5>
 
@@ -79,7 +84,6 @@ export default function Dashboard() {
 
         {tasks.map((t) => (
           <div className="card p-3 mb-3" key={t.id}>
-
             {editing === t.id ? (
               <>
                 <input
@@ -139,13 +143,20 @@ export default function Dashboard() {
                 <div className="task-title">{t.description}</div>
 
                 <div className="task-meta mt-2">
-                  Owner: <b>{t.owner || "—"}</b> |
-                  Deadline: <b> {t.deadline || "—"}</b> |
-                  Priority: <b> {t.priority}</b>
+                  Owner: <b>{t.owner || "—"}</b> | Deadline:{" "}
+                  <b>{t.deadline || "—"}</b> | Priority: <b>{t.priority}</b>
                 </div>
 
+                {/* BUTTON ROW — NEVER CHANGES POSITION */}
                 <div className="mt-3 d-flex gap-2 flex-wrap">
-                  {!t.completed && (
+                  {t.completed ? (
+                    <button
+                      className="btn btn-danger btn-sm"
+                      onClick={() => reopen(t.id)}
+                    >
+                      Reopen Task
+                    </button>
+                  ) : (
                     <button
                       className="btn btn-success btn-sm"
                       onClick={() => complete(t.id)}
@@ -162,16 +173,12 @@ export default function Dashboard() {
                   </button>
 
                   <button
-                    className="btn btn-danger btn-sm"
+                    className="btn btn-secondary btn-sm"
                     onClick={() => remove(t.id)}
                   >
                     Delete
                   </button>
                 </div>
-
-                {t.completed && (
-                  <div className="completed-label mt-2">✔ Completed</div>
-                )}
               </>
             )}
           </div>
